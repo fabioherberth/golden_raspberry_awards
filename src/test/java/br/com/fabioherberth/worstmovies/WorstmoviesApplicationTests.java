@@ -40,7 +40,7 @@ class WorstmoviesApplicationTests {
 	@BeforeEach
 	void setup() throws IOException {
 		repository.deleteAll();
-		dataLoader.readerAndSaveFile(loadCsvFileWithResourceLoader());
+		dataLoader.readAndSaveFile(loadCsvFileWithResourceLoader());
 	}
 
 	@Test
