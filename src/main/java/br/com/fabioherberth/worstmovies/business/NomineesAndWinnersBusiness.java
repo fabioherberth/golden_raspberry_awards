@@ -16,17 +16,19 @@ public class NomineesAndWinnersBusiness {
     @Autowired
     private NomineesAndWinnersService nomineesAndWinnersService;
 
-    private WinnersDTO winnersDTO = new WinnersDTO();
 
     public WinnersDTO getMoviesWinners(){
+        List<NomineesAndWinners> byWinners = getValidNominees();
+
+        return sortTheIntervals(calculateInterval(byWinners));
+    }
+
+    private List<NomineesAndWinners> getValidNominees() {
         List<NomineesAndWinners> byWinners = nomineesAndWinnersService.getNomineesWinners();
 
         byWinners.removeAll(getPrizesOnlyOnce(byWinners));
 
-        List<ProducerDTO> producerDTOS = calculateInterval(byWinners);
-        sortTheIntervals(producerDTOS);
-
-        return winnersDTO;
+        return byWinners;
     }
 
     private List<ProducerDTO> calculateInterval(List<NomineesAndWinners> movies){
@@ -48,12 +50,14 @@ public class NomineesAndWinnersBusiness {
         return producerDTOS;
     }
 
-    private void sortTheIntervals(List<ProducerDTO> producerDTOS){
+    private WinnersDTO sortTheIntervals(List<ProducerDTO> producerDTOS){
+        WinnersDTO winnersDTO = new WinnersDTO();
         Collections.sort(producerDTOS, Comparator.comparing(ProducerDTO::getInterval));
 
         winnersDTO.setMin(filterIntervals(producerDTOS, 0));
         winnersDTO.setMax(filterIntervals(producerDTOS, producerDTOS.size() - 1));
 
+        return winnersDTO;
     }
 
     private List<ProducerDTO> filterIntervals(List<ProducerDTO> producerDTOS, Integer interval) {
